@@ -1,0 +1,66 @@
+/* Paleta de Cores Mottu (baseada em análise visual do site) */
+:root {
+    --mottu-yellow: #FFC72C; /* O amarelo principal e vibrante */
+    --mottu-dark: #212121;   /* O preto/grafite usado no texto e fundo */
+    --mottu-light: #f5f5f5;  /* Um cinza claro para fundos secundários */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--mottu-dark); /* Fundo escuro */
+    color: var(--mottu-light); /* Texto claro */
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #333; /* Container principal um pouco mais claro */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    color: var(--mottu-yellow); /* Título na cor principal da marca */
+    border-bottom: 3px solid var(--mottu-yellow);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.status-info {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    color: var(--mottu-yellow);
+}
+
+/* Estilo da Tabela */
+#moto_status_table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#moto_status_table th {
+    background-color: var(--mottu-yellow); /* Cabeçalho da tabela amarelo */
+    color: var(--mottu-dark); /* Texto do cabeçalho escuro */
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+}
+
+#moto_status_table td {
+    padding: 10px;
+    border-bottom: 1px solid #555; /* Linhas divisórias suaves */
+}
+
+#moto_status_table tbody tr:hover {
+    background-color: #444; /* Efeito hover para destacar a linha */
+}
+
+/* Alerta de status para inconsistências */
+.status-alerta {
+    background-color: #e74c3c; /* Vermelho de alerta */
+    font-weight: bold;
+    color: white;
+}

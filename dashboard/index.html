@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapeamento Inteligente do Pátio - Status em Tempo Real</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Gestão de Motos Mottu - Visibilidade em Tempo Real</h1>
+        <p class="status-info">
+            Sistema IoT Ativo | Última atualização: <span id="last_update">Aguardando dados...</span>
+        </p>
+
+        <table id="moto_status_table">
+            <thead>
+                <tr>
+                    <th>ID Moto (RFID)</th>
+                    <th>Leitor Detectado</th>
+                    <th>Área do Pátio</th>
+                    <th>Timestamp da Leitura</th>
+                    <th>Status Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+         const CSV_FILE = "/data/status.csv"; // O Flask responderá a esta URL
+        
+        function updateDashboard() {
+            fetch(CSV_FILE)
+                .then(response => response.text())
+                .then(csvText => {
+                    const rows = csvText.trim().split('\n');
+                    const tableBody = document.getElementById('moto_status_table').getElementsByTagName('tbody')[0];
+                    tableBody.innerHTML = ''; 
+                    
+                    // Pula o cabeçalho (primeira linha)
+                    for (let i = 1; i < rows.length; i++) {
+                        const columns = rows[i].split(',');
+                        if (columns.length >= 5) { // Agora esperamos 5 colunas
+                            const row = tableBody.insertRow();
+                            const status = columns[4]; // Captura o status
+                            
+                            // Adiciona as células
+                            row.insertCell().textContent = columns[0]; // moto_id
+                            row.insertCell().textContent = columns[1]; // device_id
+                            row.insertCell().textContent = columns[2]; // location
+                            row.insertCell().textContent = columns[3]; // timestamp
+                            row.insertCell().textContent = status; // status
+
+                            // Lógica de Alerta Visual
+                            if (status === "INCONSISTENTE") { 
+                                row.classList.add('status-alerta');
+                            }
+                        }
+                    }
+                    document.getElementById('last_update').textContent = new Date().toLocaleTimeString();
+                })
+                .catch(error => {
+                    console.error('Erro ao ler o CSV:', error);
+                    document.getElementById('last_update').textContent = 'Erro ao carregar dados.';
+                });
+        }
+
+        // Atualiza a cada 5 segundos
+        updateDashboard(); 
+        setInterval(updateDashboard, 5000);
+    </script>
+</body>
+</html>
