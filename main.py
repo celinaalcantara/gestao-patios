@@ -21,7 +21,7 @@ class patio_vision_api:
     def analyze_location(self, location_id):
         try:
             response = requests.get(f"{self.api_url}/locations/{location_id}")
-            response.raise_for_status()  # Lança uma exceção para erros HTTP
+            response.raise_for_status()  # lança exceção p/ erros HTTP 
             return response.json()
         except requests.exceptions.RequestException as e:
             print(f"falha ao chamar a api de visão: {e}")
@@ -29,9 +29,9 @@ class patio_vision_api:
 
     def register_moto(self, moto_data):
         try:
-            # O endpoint para registrar a moto
+            # endpoint p/ registrar a moto
             response = requests.post(f"{self.api_url}/moto", json=moto_data)
-            response.raise_for_status() # lança exceção para erros HTTP (4xx ou 5xx)
+            response.raise_for_status() # lança exceção p/ erros HTTP 
             print(f"moto {moto_data.get('id')} registrada na api.")
             return True
         except requests.exceptions.RequestException as e:
@@ -58,15 +58,13 @@ def persist_data(data_string):
         device_id = data[1]
         location = data[2]
         timestamp = data[3]
-        final_status = 'NAO_VERIFICADO' # Valor padrão se a API falhar
+        final_status = 'NAO_VERIFICADO' # valor padrão se a API falhar
         
         # Integração com a API de Visão Computacional
         vision_data = patio_api_client.analyze_location(location)
         if vision_data:
             print(f"api de visão respondeu para {location}: {vision_data}")
             vision_status = vision_data.get('status', 'erro')
-            # logica para comparar o sensor com a visao
-            
             if vision_status == 'ocupada':
                 # Se a visão confirma, tentamos registrar a moto na API Java
                 moto_payload = {
@@ -77,11 +75,11 @@ def persist_data(data_string):
                 if patio_api_client.register_moto(moto_payload):
                     final_status = 'OK' # Sensor, visão e registro na API concordam.
                 else:
-                    final_status = 'ERRO_REGISTRO' # Falha ao fazer o POST para a API.
+                    final_status = 'ERRO_REGISTRO'
             elif vision_status == 'livre':
                 final_status = 'INCONSISTENTE' # sensor detectou, mas visão não vê. ALERTA!
             else:
-                final_status = 'ERRO_VISAO' # a API retornou algo inesperado.
+                final_status = 'ERRO_VISAO'
         
         # cria um dataframe com os novos dados
         new_data = pd.DataFrame([{
@@ -129,9 +127,7 @@ def mock_vision_api(location_id):
 
 @app.route('/mock/moto', methods=['POST'])
 def mock_register_moto():
-    # esta rota simula o endpoint de registro da api java.
-    # ela apenas confirma o recebimento e retorna sucesso (http 200).
-    # isso permite que o status 'ok' seja alcançado.
+    # simula o endpoint de registro da api java
     print("[mock api] recebido post para registrar moto. retornando sucesso.")
     return jsonify({'message': 'moto registrada com sucesso (mock)'}), 200
 
