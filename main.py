@@ -29,14 +29,14 @@ class patio_vision_api:
 
     def register_moto(self, moto_data):
         try:
-            # O endpoint para registrar a moto, conforme a proposta.
+            # O endpoint para registrar a moto
             response = requests.post(f"{self.api_url}/moto", json=moto_data)
-            response.raise_for_status() # Lança exceção para erros HTTP (4xx ou 5xx)
+            response.raise_for_status() # lança exceção para erros HTTP (4xx ou 5xx)
             print(f"moto {moto_data.get('id')} registrada na api.")
             return True
         except requests.exceptions.RequestException as e:
             print(f"erro ao registrar moto na api: {e}")
-            # Se a resposta tiver corpo (ex: erro de validação), podemos imprimi-lo
+           
             print(f"detalhe do erro: {e.response.text if e.response else 'n/a'}")
             return False
 
@@ -79,9 +79,9 @@ def persist_data(data_string):
                 else:
                     final_status = 'ERRO_REGISTRO' # Falha ao fazer o POST para a API.
             elif vision_status == 'livre':
-                final_status = 'INCONSISTENTE' # Sensor detectou, mas visão não vê. ALERTA!
+                final_status = 'INCONSISTENTE' # sensor detectou, mas visão não vê. ALERTA!
             else:
-                final_status = 'ERRO_VISAO' # A API retornou algo inesperado.
+                final_status = 'ERRO_VISAO' # a API retornou algo inesperado.
         
         # cria um dataframe com os novos dados
         new_data = pd.DataFrame([{
@@ -148,10 +148,9 @@ def run_mqtt_client():
         print(f"falha ao conectar o cliente mqtt: {e}")
 
 # inicialização
-# para testar com a api real, use a primeira linha.
-# para testar com o simulador, comente a primeira e descomente a segunda.
-# patio_api_client = patio_vision_api("http://localhost:8080/api")
-patio_api_client = patio_vision_api("http://127.0.0.1:5000/mock")
+
+# patio_api_client = patio_vision_api("http://localhost:8080/api") # para testar com a api real
+patio_api_client = patio_vision_api("http://127.0.0.1:5000/mock") # para testar com o simulador
 
 if __name__ == "__main__":
     # inicia o cliente mqtt em outra thread pra não travar o servidor web
