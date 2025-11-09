@@ -30,7 +30,7 @@
     </div>
 
     <script>
-         const CSV_FILE = "/data/status.csv"; // O Flask responderá a esta URL
+         const CSV_FILE = "/data/status.csv";
         
         function updateDashboard() {
             fetch(CSV_FILE)
@@ -40,22 +40,25 @@
                     const tableBody = document.getElementById('moto_status_table').getElementsByTagName('tbody')[0];
                     tableBody.innerHTML = ''; 
                     
-                    // Pula o cabeçalho (primeira linha)
                     for (let i = 1; i < rows.length; i++) {
                         const columns = rows[i].split(',');
-                        if (columns.length >= 5) { // Agora esperamos 5 colunas
-                            const row = tableBody.insertRow();
-                            const status = columns[4]; // Captura o status
-                            
-                            // Adiciona as células
-                            row.insertCell().textContent = columns[0]; // moto_id
-                            row.insertCell().textContent = columns[1]; // device_id
-                            row.insertCell().textContent = columns[2]; // location
-                            row.insertCell().textContent = columns[3]; // timestamp
-                            row.insertCell().textContent = status; // status
+                        if (columns.length >= 5) { 
+                            const row = tableBody.insertRow(0);
+                            let motoId, deviceId, location, timestamp, status;
 
-                            // Lógica de Alerta Visual
-                            if (status === "INCONSISTENTE") { 
+                            // Se a primeira coluna for vazia (problema do 'Unnamed: 0'), pule-a.
+                            if (columns[0] === '' && columns.length > 5) {
+                                [motoId, deviceId, location, timestamp, status] = [columns[1], columns[2], columns[3], columns[4], columns[5]];
+                            } else {
+                                [motoId, deviceId, location, timestamp, status] = [columns[0], columns[1], columns[2], columns[3], columns[4]];
+                            }
+                            
+                            row.insertCell().textContent = motoId;
+                            row.insertCell().textContent = deviceId;
+                            row.insertCell().textContent = location;
+                            row.insertCell().textContent = timestamp;
+                            row.insertCell().textContent = status;
+                            if (status === "INCONSISTENTE" || status === "ERRO_REGISTRO") { 
                                 row.classList.add('status-alerta');
                             }
                         }
@@ -68,7 +71,6 @@
                 });
         }
 
-        // Atualiza a cada 5 segundos
         updateDashboard(); 
         setInterval(updateDashboard, 5000);
     </script>
